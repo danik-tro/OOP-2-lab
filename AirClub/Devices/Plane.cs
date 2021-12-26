@@ -1,34 +1,23 @@
 namespace AirClub.Devices;
-using AirClub.Parts;
-using AirClub.Engines;
+using Parts;
+using Engines;
 
-public class Plane : ElectricalDevice
+public class Plane<T, U> : Device<T, U>
+where T: Part
+where U: Engine
 {
-    public new const string DeviceName = "Plane";
-    
-    protected Plane() : base()
-    {
-    }
-    
-    public Plane(string model) : base(model)
-    {
-    }
-    
-    public Plane(string model, List<Part> parts) : base(model, parts)
-    {
-    }
+    public override string NameDevice { get; init; } = "Plane";
 
-    public Plane(string model, List<Part> parts, Engine engine) : base(model, parts, engine)
-    {
-    }
+    public Plane(string model) : base(model) { }
     
-    public override void Move()
-    {
-        Console.WriteLine($"{DeviceName} is moving.");
-    }
+    public Plane(string model, U engine) : base(model, engine) {}
+    
+    public Plane(string model, List<T> parts) : base(model, parts) {}
+
+    public Plane(string model, U engine, List<T> parts) : base(model, engine, parts) {}
 
     public override object Clone()
     {
-        return new Plane(_model, CloneParts(), CloneEngine());
+        return new Plane<T, U>(Model, DeviceEngine, parts);
     }
 }

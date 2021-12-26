@@ -1,41 +1,19 @@
 namespace AirClub.Parts;
+
 public abstract class Part : IPart, ICloneable
 {
-    protected string SerialNumber;
-    protected string _name;
-    protected int _year;
+    public string Name { get; init; }
+    public string Id { get; init; } = Guid.NewGuid().ToString();
 
-    public string Name
+    public Part(string name)
     {
-        get;
+        Name = name;
     }
 
-    public int Year
+    public override string ToString()
     {
-        get;
-    }
-    
-    public Part(string name, int year)
-    {
-        SerialNumber = GenerateId();
-        _name = name;
-        _year = year;
-    }
-    
-    public string GenerateId()
-    {
-        return Guid.NewGuid().ToString();
+        return $"{Name}:{Id}";
     }
 
     public abstract object Clone();
-    
-    public override string ToString()
-    {
-        return Describe();
-    }
-
-    public string Describe()
-    {
-        return $"{Name} - {SerialNumber}:{Year}";
-    }
 }

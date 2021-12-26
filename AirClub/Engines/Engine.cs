@@ -2,36 +2,20 @@ namespace AirClub.Engines;
 
 public abstract class Engine : IEngine, ICloneable
 {
-    public static string EngineName = "Engine";
-    
-    protected string SerialNumber;
-    protected int _year;
+    public string Id { get; init; } = Guid.NewGuid().ToString();
+    public virtual string Name { get; init; } = "";
+    public string Model { get; init; }
 
-    public int Year
-    {
-        get;
-    }
+    public Engine(string model) => Model = model;
     
-    public Engine(int year)
-    {
-        SerialNumber = GenerateId();
-        _year = year;
-    }
-    
+    public abstract object Clone();
     public override string ToString()
     {
-        return Describe();
-    }
-    
-    public virtual string Describe()
-    {
-        return $"{EngineName}:{SerialNumber}:{Year}";
+        return $"{Name}:{Model}:{Id}";
     }
 
-    public abstract object Clone();
-    
-    public string GenerateId()
+    public virtual bool IsElectric()
     {
-        return Guid.NewGuid().ToString();
+        return true;
     }
 }

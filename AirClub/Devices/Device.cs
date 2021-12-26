@@ -1,58 +1,52 @@
 namespace AirClub.Devices;
+using Engines;
+using Parts;
 
-using System.Collections.Generic;
-using AirClub.Parts;
 
-public abstract class Device : IDevice, ICloneable
+public abstract class Device<T, U>: IDevice, ICloneable, IComparable
+    where T: Part
+    where U: Engine
 {
-    public const string DeviceName = "Device";
+    protected internal U engine;
+    protected internal List<T> parts = new List<T>();
     
-    protected string _id;
-    protected string _model;
-    protected List<Part> _parts = new List<Part>();
+    public string Id { get; init; } = Guid.NewGuid().ToString();
+    public virtual U DeviceEngine
+    {
+        get => engine;
+        init
+        {
+            if (value is null)
+                throw new Exception("Engine is null.");
+            engine = value;
+        }
+    }
 
-    protected Device()
+    public virtual string NameDevice { get; init; } = "";
+    
+    public string Model { get; }
+
+    public Device(string model)
     {
-        _id = GenerateId();
+        Model = model;
     }
     
-    public Device(string model) : this()
+    public Device(string model, U engine) : this(model)
     {
-        _model = model;
+        DeviceEngine = engine;
     }
     
-    public Device(string model, List<Part> parts) : this(model)
+    public Device(string model, List<T> parts) : this(model)
     {
         AddParts(parts);
     }
 
-    public override string ToString()
+    public Device(string model, U engine, List<T> parts) : this(model, engine)
     {
-        return Info();
+        AddParts(parts);
     }
 
-    public string PartsInfo()
-    {
-        return String.Join("\n\r* ", _parts);
-    }
-    
-    public string GenerateId()
-    {
-        return Guid.NewGuid().ToString();
-    }
-
-    public List<Part> CloneParts()
-    {
-        var parts = new List<Part>();
-        foreach (var part in _parts)
-        {
-            parts.Add(part);
-        }
-
-        return parts;
-    }
-    
-    public void AddParts(List<Part> parts)
+    public void AddParts(in List<T> parts)
     {
         foreach (var part in parts)
         {
@@ -60,14 +54,30 @@ public abstract class Device : IDevice, ICloneable
         }
     }
     
-    public void AddPart(Part part)
+    public void AddPart(in T part)
     {
-        this._parts.Add((Part)part.Clone());
+        parts.Add((T)part.Clone());
+    }
+
+    public override string ToString()
+    {
+        return String.Concat(
+            $"Device: {NameDevice}:{Model}:{Id}\n\rEngine: {DeviceEngine}\nParts:\n\t * ",
+            String.Join("\n\t * ", parts)
+            );
+    }
+
+    public virtual void Prepare()
+    {
+        Console.WriteLine($"Prepare device {Id}:{NameDevice}:{Model}");
+    }
+
+    public virtual int CompareTo(object o)
+    {
+        var device = o as Device<Part, Engine>;
+
+        return this.NameDevice.CompareTo(device.NameDevice);
     }
     
-    public abstract void Move();
-    
-    public abstract string Info();
     public abstract object Clone();
 }
-
