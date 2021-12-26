@@ -48,10 +48,7 @@ public abstract class Device<T, U>: IDevice, ICloneable, IComparable
 
     public void AddParts(in List<T> parts)
     {
-        foreach (var part in parts)
-        {
-            AddPart(part);
-        }
+        this.parts.AddRange(parts);
     }
     
     public void AddPart(in T part)

@@ -20,10 +20,7 @@ public class Register<V, T, U>
     
     public void AddDevices(List<V> devices)
     {
-        foreach (var device in devices)
-        {
-            AddDevice(device);
-        }
+        this.devices.AddRange(devices);
     }
 
     public IEnumerable<V> ElectricDevices()
